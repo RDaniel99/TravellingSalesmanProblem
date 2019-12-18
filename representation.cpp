@@ -1,4 +1,5 @@
 #include "representation.h"
+#include "randomgenerator.h"
 //--------------------------------------------------------------------------------------------------
 using namespace std;
 //--------------------------------------------------------------------------------------------------
@@ -12,12 +13,12 @@ CRepresentation::CRepresentation(bool generateRandom, int nrOfDimensions, int ge
 
     if(generateRandom)
     {
+        CRandomGenerator randGen;
         for(unsigned int dimIdx = 0; dimIdx < m_NrOfDimensions; dimIdx++)
         {
             for(unsigned int geneIdx = 0; geneIdx < m_GenesPerDimension; geneIdx++)
             {
-                /// to-do: create RandomGenerator class
-                m_Genes[dimIdx][geneIdx] = (dimIdx + geneIdx) % 2;
+                m_Genes[dimIdx][geneIdx] = randGen.ComputeRandomGene();
             }
         }
     }
