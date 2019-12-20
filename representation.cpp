@@ -9,12 +9,17 @@ CRepresentation::CRepresentation(const bool generateRandom, const int totalEleme
     m_Count = totalElements;
 
     m_Elements.clear();
-    for(int i = 1; i <= totalElements; i++)
-        m_Elements.push_back(i);
 
     if(generateRandom)
     {
-        CRandomGenerator::ShuffleRepresentation(m_Elements);
+        int N = totalElements;
+        while(N--)
+            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N + 1) + 1);
+    }
+    else
+    {
+        for(int i = 1; i <= totalElements; i++)
+            m_Elements.push_back(i);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -31,6 +36,16 @@ CRepresentation::CRepresentation(const CRepresentation &rep)
 CRepresentation::~CRepresentation()
 {
 
+}
+//--------------------------------------------------------------------------------------------------
+bool CRepresentation::Set(const int idx, const int value)
+{
+    if(!IsIndexValid(idx))
+        return 0;
+
+    m_Elements[idx] = value;
+
+    return true;
 }
 //--------------------------------------------------------------------------------------------------
 int CRepresentation::Get(const int idx) const
@@ -74,5 +89,39 @@ bool CRepresentation::IsIndexValid(const int idx) const
         return false;
 
     return true;
+}
+//--------------------------------------------------------------------------------------------------
+bool CRepresentation::CrossOver(CRepresentation &rep1, CRepresentation &rep2)
+{
+    if(rep1.GetCount() != rep2.GetCount())
+        return false;
+
+    int maxCross = rep1.GetCount() - 1;
+    while(maxCross)
+    {
+        int idxCross = CRandomGenerator::ComputeRandomInteger(maxCross);
+        bool flag = false;
+
+        for(int i = idxCross + 1; i < rep1.GetCount(); i++)
+        {
+            int tmp1 = rep1.Get(i);
+            int tmp2 = rep2.Get(i);
+
+            if(flag || tmp1 != tmp2)
+            {
+                flag = true;
+
+                rep1.Set(i, tmp2);
+                rep2.Set(i, tmp1);
+            }
+        }
+
+        if(flag)
+            return true;
+
+        maxCross--;
+    }
+
+    return false;
 }
 //--------------------------------------------------------------------------------------------------

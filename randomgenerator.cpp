@@ -8,7 +8,10 @@ using namespace randgen;
 //--------------------------------------------------------------------------------------------------
 int CRandomGenerator::ComputeRandomInteger(int maxInt)
 {
-    return rand() % maxInt;
+    if(maxInt)
+        return rand() % maxInt;
+
+    return 0;
 }
 //--------------------------------------------------------------------------------------------------
 double CRandomGenerator::ComputeRandomInInterval(const double left, const double right)
