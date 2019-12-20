@@ -1,41 +1,29 @@
 #include <random>
 #include <ctime>
+#include <algorithm>
 #include "randomgenerator.h"
 //--------------------------------------------------------------------------------------------------
 using namespace std;
-//--------------------------------------------------------------------------------------------------
-CRandomGenerator::CRandomGenerator()
-{
-    srand(time(NULL));
-
-    m_Seed = rand();
-}
-//--------------------------------------------------------------------------------------------------
-CRandomGenerator::~CRandomGenerator()
-{
-
-}
+using namespace randgen;
 //--------------------------------------------------------------------------------------------------
 int CRandomGenerator::ComputeRandomInteger(int maxInt)
 {
-    int ans = m_Seed % maxInt;
-    m_Seed = rand();
-
-    return ans;
-}
-//--------------------------------------------------------------------------------------------------
-int CRandomGenerator::ComputeRandomGene()
-{
-    return ComputeRandomInteger(2);
+    return rand() % maxInt;
 }
 //--------------------------------------------------------------------------------------------------
 double CRandomGenerator::ComputeRandomInInterval(const double left, const double right)
 {
-    double rd01 = (1.0 * m_Seed) / double(RAND_MAX);
+    double rd01 = (1.0 * rand()) / double(RAND_MAX);
     double ans = (right - left) * rd01 + left;
 
-    m_Seed = rand();
-
     return ans;
+}
+//--------------------------------------------------------------------------------------------------
+bool CRandomGenerator::ShuffleRepresentation(vector<int> &elements, int times)
+{
+    while(times--)
+        random_shuffle(elements.begin(), elements.end());
+
+    return true;
 }
 //--------------------------------------------------------------------------------------------------

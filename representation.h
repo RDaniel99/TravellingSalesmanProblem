@@ -7,27 +7,21 @@
 class CRepresentation
 {
 public:
-    CRepresentation(bool generateRandom, int nrOfDimensions, int genesPerDim);
+    CRepresentation(const bool generateRandom, const int totalElements);
     CRepresentation(const CRepresentation &rep);
     ~CRepresentation();
 
-    int     GetGene(const int dimIdx, const int geneIdx) const;
-    int     GetNrOfDimensions() const;
-    int     GetGenesPerDimension() const;
+    int     Get(const int idx) const;
+    int     GetCount() const;
 
-    bool    SetGene(const int dimIdx, const int geneIdx, const int geneValue);
-    bool    FlipGene(const int dimIdx, const int geneIdx);
-    int     ComputeIntForDim(const int dimIdx) const;
+    bool    Swap(const int idx1, const int idx2);
+    bool    IsEqual(const CRepresentation &rep) const;
+private:
+    bool    IsIndexValid(const int idx) const;
 
 private:
-    bool    IsDimIdxValid(const int dimIdx) const;
-    bool    IsGeneIdxValid(const int geneIdx) const;
-
-private:
-    int                                 m_NrOfDimensions;
-    int                                 m_GenesPerDimension;
-    std::vector<std::vector<int> >      m_Genes;
-    /// to-do: check if genes can be bool (if it is worth it)
+    int                 m_Count;
+    std::vector<int>    m_Elements;
 };
 //--------------------------------------------------------------------------------------------------
 #endif // H_REPRESENTATION
