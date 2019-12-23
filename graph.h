@@ -37,6 +37,8 @@ class Graph
     list<int>        vertexes_;
     list<list<pair<int,float>>>  edges_;///pair left  - index of neighbour
                                          ////pair right - cost of edge
+    
+    float GetCost(int idx1,int idx2);
     void printGraph();
     Graph(string path_to_input_file);
     ~Graph();

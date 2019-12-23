@@ -14,11 +14,11 @@ CRepresentation::CRepresentation(const bool generateRandom, const int totalEleme
     {
         int N = totalElements;
         while(N--)
-            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N + 1) + 1);
+            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N));
     }
     else
     {
-        for(int i = 1; i <= totalElements; i++)
+        for(int i = 0; i < totalElements; i++)
             m_Elements.push_back(i);
     }
 }

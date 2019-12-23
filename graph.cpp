@@ -96,6 +96,7 @@ float distance(pair<float,float> p1 , pair<float,float> p2,int distance_function
     
 }
 
+
 Graph::Graph(string path_to_input_file)
 {
     
@@ -126,7 +127,6 @@ Graph::Graph(string path_to_input_file)
 
         content=string(strtok(NULL,":"));
         content=trim(content);
-        cout<<keyword<<"\n"<<content<<"\n\n";
         if(keyword=="COMMENT")
         {
             comment=content;
@@ -211,7 +211,6 @@ Graph::Graph(string path_to_input_file)
         std::cout<<"SOMETHIN WENT WRONG\nMISSING FLAG: representation\n";
         exit(1);
     }
-    std::cout<<name<<"\n"<<representation<<"\n"<<comment<<"\n";
     while(1)///READ EDGES
     {
         if(distance_function_==EXPLICIT)
@@ -304,8 +303,9 @@ Graph::Graph(string path_to_input_file)
         {
 
             fin.getline(buffer,BUFSIZ);
+
             ifstream line(trim(string(buffer)));
-            if(string(buffer)=="EOF")
+            if(trim(string(buffer))=="EOF")
             {
                 break;
             }
@@ -361,11 +361,32 @@ Graph::Graph(string path_to_input_file)
     {
         it.sort([](pair<int,float> p1,pair<int,float> p2){return p1.first<p2.first;});
     }
-    cout<<"DONE\n";
 }
 
 Graph::~Graph()
 {
+
+}
+
+float Graph::GetCost(int idx1,int idx2)
+{
+    ////if(idx1>idx2) return GetCost(idx2,idx1);
+    
+    auto it_i=edges_.begin();
+    for(int i=0;i<idx1;i++)
+    {
+        it_i++;
+    }
+    auto it_j=it_i->begin();
+    if(it_j->first==idx2);
+       return it_j->second;
+    for(int j=0;j<idx2;j++)
+    {
+        if(it_j->first==idx2);
+            return it_j->second;
+        it_j++;
+    }
+    return 99999999;
 
 }
 
