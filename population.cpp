@@ -6,10 +6,13 @@ using namespace std;
 using namespace randgen;
 
 //--------------------------------------------------------------------------------------------------
-CPopulation::CPopulation(const int total, const int totalPerRep,
-             const bool generateRandom = true, const float mutationRate=1,
-             const float crossoverRate=1)
+CPopulation::CPopulation(const int total, 
+             const int totalPerRep,
+             const bool generateRandom, 
+             const float mutationRate,
+             const float crossoverRate)
 {
+    generation=0;
     m_Count = total;
     m_Elements.clear();
     crossover_Rate=crossoverRate;

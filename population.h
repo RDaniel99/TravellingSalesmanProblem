@@ -9,10 +9,7 @@
 class CPopulation
 {
 public:
-    CPopulation(const int total, const int totalPerRep,
-                const bool generateRandom = true, const float mutationRate=1,
-                const float crossoverRate=1);
-
+    CPopulation(const int total, const int totalPerRep, const bool generateRandom = true, const float mutationRate=1,const float crossoverRate=1);
     ~CPopulation();
 
     CRepresentation*    Get(const int idx) const;
@@ -29,7 +26,7 @@ private:
     bool IsIndexValid(const int idx) const;
 
 private:
-    int                             generation=0;
+    int                             generation;
     int                             m_Count;
     float                           mutation_Rate;
     float                           crossover_Rate;

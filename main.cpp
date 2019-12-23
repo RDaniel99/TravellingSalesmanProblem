@@ -19,7 +19,7 @@ int main(int argc,char* argv[])
     int best=99999999;
     
 
-    CPopulation pop(100,t.number_of_vertexes_,true);
+    CPopulation pop(100,t.number_of_vertexes_,true,1,1);
 
     for(int i=0;i<100;i++)
     {
