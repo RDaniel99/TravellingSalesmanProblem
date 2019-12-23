@@ -32,13 +32,6 @@ list<int> GraphEvaluator::getDecodedRepresentation(CRepresentation &representati
         {
             iter++;
         }
-
-        cout<<aux<<"\n";
-        for(auto el:nodes)
-        {
-            cout<<el<<" ";
-        }
-        cout<<"\n\n";
         result.push_back(*iter);
         nodes.remove(*iter);
     }

@@ -19,21 +19,11 @@ int main(int argc,char* argv[])
     int best=99999999;
     
 
-    for(int i=0;i<10;i++)
+    CPopulation pop(100,t.number_of_vertexes_,true);
+
+    for(int i=0;i<100;i++)
     {
-        auto x=CRepresentation(true,t.number_of_vertexes_);
-
-        auto f=evaluator.getDecodedRepresentation(x);
-
-        auto fit=evaluator.getFitness(t,x);
-        cout<<"\n";
-        for(auto el:f)
-        {
-            cout<<el<<" ";
-        }
-        cout<<"FIT: "<<fit<<"\n";
-        if(fit<best) best=fit;
+        cout<<evaluator.getFitness(t, *pop.Get(i))<<"\n";
     }
-    cout<<best<<"\n";
     return 0;
 }
