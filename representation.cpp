@@ -125,3 +125,59 @@ bool CRepresentation::CrossOver(CRepresentation &rep1, CRepresentation &rep2)
     return false;
 }
 //--------------------------------------------------------------------------------------------------
+vector<int> CRepresentation::Convert(const CRepresentation &rep)
+{
+    vector<int> path;
+    vector<int> aib;
+
+    int N = rep.GetCount();
+
+    path.clear();
+
+    aib.clear();
+    aib.resize(N + 2);
+
+    int pwAux = 1;
+    while(pwAux <= N)
+        pwAux <<= 1;
+
+    pwAux >>= 1;
+
+    for(int i = 0; i < N; i++)
+    {
+        int need = rep.Get(i);
+        int pw = pwAux;
+        int pos = 0;
+
+        while(pw)
+        {
+            if(pos + pw <= N)
+                if(pos + pw - CRepresentation::QueryAib(pos + pw, aib) < need)
+                    pos += pw;
+
+            pw >>= 1;
+        }
+
+        path.push_back(pos + 1);
+        CRepresentation::UpdateAib(pos + 1, N, aib);
+    }
+
+    return path;
+}
+//--------------------------------------------------------------------------------------------------
+void CRepresentation::UpdateAib(int pos, int N, vector<int> &aib)
+{
+    for(;pos <= N; pos += pos & (-pos))
+        aib[pos]++;
+}
+//--------------------------------------------------------------------------------------------------
+int CRepresentation::QueryAib(int pos, std::vector<int>& aib)
+{
+    int ans = 0;
+
+    for(;pos; pos -= pos & (-pos))
+        ans += aib[pos];
+
+    return ans;
+}
+//--------------------------------------------------------------------------------------------------
