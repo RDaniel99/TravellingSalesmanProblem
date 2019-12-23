@@ -1,11 +1,19 @@
 #include "population.h"
+#include "randomgenerator.h"
+
 //--------------------------------------------------------------------------------------------------
 using namespace std;
+using namespace randgen;
+
 //--------------------------------------------------------------------------------------------------
-CPopulation::CPopulation(const int total, const int totalPerRep, const bool generateRandom)
+CPopulation::CPopulation(const int total, const int totalPerRep,
+             const bool generateRandom = true, const float mutationRate=1,
+             const float crossoverRate=1)
 {
     m_Count = total;
     m_Elements.clear();
+    crossover_Rate=crossoverRate;
+    mutation_Rate=mutationRate;
 
     for(int i = 0; i < total; i++)
         m_Elements.push_back(new CRepresentation(generateRandom, totalPerRep));
@@ -66,4 +74,41 @@ bool CPopulation::IsIndexValid(const int idx) const
 
     return true;
 }
+//--------------------------------------------------------------------------------------------------
+void  CPopulation::Evolve()
+{
+    Mutate();
+    Crossover();
+    Select();
+    generation++;
+    
+}
+
+//--------------------------------------------------------------------------------------------------
+void  CPopulation::Mutate()
+{
+    for(auto cromosome:m_Elements)
+    {
+        for(int i=0;i<cromosome->GetCount();i++)
+        {
+            if(CRandomGenerator::ComputeRandomInInterval(0,1)<=mutation_Rate)
+            {
+                cromosome->Set(i,(cromosome->Get(i)+1)%2);
+            }
+        }
+    }
+}
+
+//--------------------------------------------------------------------------------------------------
+void  CPopulation::Crossover()
+{
+
+}
+
+//--------------------------------------------------------------------------------------------------
+void  CPopulation::Select()
+{
+
+}
+
 //--------------------------------------------------------------------------------------------------

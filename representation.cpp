@@ -14,7 +14,7 @@ CRepresentation::CRepresentation(const bool generateRandom, const int totalEleme
     {
         int N = totalElements;
         while(N--)
-            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N));
+            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N+1));
     }
     else
     {
