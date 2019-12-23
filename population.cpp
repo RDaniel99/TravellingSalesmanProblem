@@ -40,6 +40,12 @@ int CPopulation::GetCount() const
     return m_Count;
 }
 //--------------------------------------------------------------------------------------------------
+int CPopulation::GetGeneration() const
+{
+    return generation;
+}
+
+//--------------------------------------------------------------------------------------------------
 bool CPopulation::AddRep(CRepresentation* rep)
 {
     if(!rep)

@@ -14,6 +14,7 @@ public:
 
     CRepresentation*    Get(const int idx) const;
     int                 GetCount() const;
+    int                 GetGeneration() const;
     bool                AddRep(CRepresentation* rep);
     bool                RemoveByRep(const CRepresentation* rep);
     bool                RemoveByIdx(const int idx);
