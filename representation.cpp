@@ -2,44 +2,35 @@
 #include "randomgenerator.h"
 //--------------------------------------------------------------------------------------------------
 using namespace std;
+using namespace randgen;
 //--------------------------------------------------------------------------------------------------
-CRepresentation::CRepresentation(bool generateRandom, int nrOfDimensions, int genesPerDim)
+CRepresentation::CRepresentation(const bool generateRandom, const int totalElements)
 {
-    m_NrOfDimensions    = nrOfDimensions;
-    m_GenesPerDimension = genesPerDim;
+    m_Count = totalElements;
 
-    m_Genes.clear();
-    m_Genes.resize(nrOfDimensions, vector <int> (genesPerDim));
+    m_Elements.clear();
 
     if(generateRandom)
     {
-        CRandomGenerator randGen;
-        for(unsigned int dimIdx = 0; dimIdx < m_NrOfDimensions; dimIdx++)
-        {
-            for(unsigned int geneIdx = 0; geneIdx < m_GenesPerDimension; geneIdx++)
-            {
-                m_Genes[dimIdx][geneIdx] = randGen.ComputeRandomGene();
-            }
-        }
+        int N = totalElements;
+        while(N--)
+            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N + 1) + 1);
+    }
+    else
+    {
+        for(int i = 1; i <= totalElements; i++)
+            m_Elements.push_back(i);
     }
 }
 //--------------------------------------------------------------------------------------------------
 CRepresentation::CRepresentation(const CRepresentation &rep)
 {
-    m_NrOfDimensions    = rep.GetNrOfDimensions();
-    m_GenesPerDimension = rep.GetGenesPerDimension();
+    m_Count = rep.GetCount();
 
-    m_Genes.clear();
-    m_Genes.resize(m_NrOfDimensions, vector <int> (m_GenesPerDimension));
+    m_Elements.clear();
 
-    for(int dimIdx = 0; dimIdx < m_NrOfDimensions; dimIdx++)
-    {
-        for(int geneIdx = 0; geneIdx < m_GenesPerDimension; geneIdx++)
-        {
-            int geneValue = rep.GetGene(dimIdx, geneIdx);
-            SetGene(dimIdx, geneIdx, geneValue);
-        }
-    }
+    for(int i = 0; i < m_Count; i++)
+        m_Elements[i] = rep.Get(i);
 }
 //--------------------------------------------------------------------------------------------------
 CRepresentation::~CRepresentation()
@@ -47,68 +38,90 @@ CRepresentation::~CRepresentation()
 
 }
 //--------------------------------------------------------------------------------------------------
-int CRepresentation::GetGene(const int dimIdx, const int geneIdx) const
+bool CRepresentation::Set(const int idx, const int value)
 {
-    if(!IsDimIdxValid(dimIdx) || !IsGeneIdxValid(geneIdx))
+    if(!IsIndexValid(idx))
+        return 0;
+
+    m_Elements[idx] = value;
+
+    return true;
+}
+//--------------------------------------------------------------------------------------------------
+int CRepresentation::Get(const int idx) const
+{
+    if(!IsIndexValid(idx))
         return -1;
 
-    return m_Genes[dimIdx][geneIdx];
+    return m_Elements[idx];
 }
 //--------------------------------------------------------------------------------------------------
-int CRepresentation::GetNrOfDimensions() const
+int CRepresentation::GetCount() const
 {
-    return m_NrOfDimensions;
+    return m_Count;
 }
 //--------------------------------------------------------------------------------------------------
-int CRepresentation::GetGenesPerDimension() const
+bool CRepresentation::Swap(const int idx1, const int idx2)
 {
-    return m_GenesPerDimension;
-}
-//--------------------------------------------------------------------------------------------------
-bool CRepresentation::SetGene(const int dimIdx, const int geneIdx, const int geneValue)
-{
-    if(!IsDimIdxValid(dimIdx) || !IsGeneIdxValid(geneIdx))
+    if(!IsIndexValid(idx1) || !IsIndexValid(idx2))
         return false;
 
-    m_Genes[dimIdx][geneIdx] = geneValue;
-    return true;
-}
-//--------------------------------------------------------------------------------------------------
-bool CRepresentation::IsDimIdxValid(const int dimIdx) const
-{
-    if(dimIdx < 0 || dimIdx >= m_NrOfDimensions)
-        return false;
+    swap(m_Elements[idx1], m_Elements[idx2]);
 
     return true;
 }
 //--------------------------------------------------------------------------------------------------
-bool CRepresentation::IsGeneIdxValid(const int geneIdx) const
+bool CRepresentation::IsEqual(const CRepresentation &rep) const
 {
-    if(geneIdx < 0 || geneIdx >= m_GenesPerDimension)
+    if(m_Count != rep.GetCount())
+        return false;
+
+    for(int i = 0; i < m_Count; i++)
+        if(m_Elements[i] != rep.Get(i))
+            return false;
+
+    return true;
+}
+//--------------------------------------------------------------------------------------------------
+bool CRepresentation::IsIndexValid(const int idx) const
+{
+    if(idx < 0 || idx >= m_Count)
         return false;
 
     return true;
 }
 //--------------------------------------------------------------------------------------------------
-bool CRepresentation::FlipGene(const int dimIdx, const int geneIdx)
+bool CRepresentation::CrossOver(CRepresentation &rep1, CRepresentation &rep2)
 {
-    if(!IsDimIdxValid(dimIdx) || !IsGeneIdxValid(geneIdx))
+    if(rep1.GetCount() != rep2.GetCount())
         return false;
 
-    m_Genes[dimIdx][geneIdx] = 1 - m_Genes[dimIdx][geneIdx];
-    return true;
-}
-//--------------------------------------------------------------------------------------------------
-int CRepresentation::ComputeIntForDim(const int dimIdx) const
-{
-    if(!IsDimIdxValid(dimIdx))
-        return -1;
+    int maxCross = rep1.GetCount() - 1;
+    while(maxCross)
+    {
+        int idxCross = CRandomGenerator::ComputeRandomInteger(maxCross);
+        bool flag = false;
 
-    int x = 0;
+        for(int i = idxCross + 1; i < rep1.GetCount(); i++)
+        {
+            int tmp1 = rep1.Get(i);
+            int tmp2 = rep2.Get(i);
 
-    for(unsigned int i = 0; i < m_Genes[dimIdx].size(); i++)
-        x = (x << 1) + m_Genes[dimIdx][i];
+            if(flag || tmp1 != tmp2)
+            {
+                flag = true;
 
-    return x;
+                rep1.Set(i, tmp2);
+                rep2.Set(i, tmp1);
+            }
+        }
+
+        if(flag)
+            return true;
+
+        maxCross--;
+    }
+
+    return false;
 }
 //--------------------------------------------------------------------------------------------------

@@ -3,19 +3,25 @@
 //--------------------------------------------------------------------------------------------------
 #include <random>
 #include <cstdlib>
+#include <ctime>
+//--------------------------------------------------------------------------------------------------
+namespace randgen {
+//--------------------------------------------------------------------------------------------------
+inline void init()
+{
+    srand(time(NULL));
+}
 //--------------------------------------------------------------------------------------------------
 class CRandomGenerator
 {
 public:
-    CRandomGenerator();
-    ~CRandomGenerator();
 
-    double  ComputeRandomInInterval(const double left, const double right);
-    int     ComputeRandomGene();
-    int     ComputeRandomInteger(int maxInt = RAND_MAX);
+    static double   ComputeRandomInInterval(const double left, const double right);
+    static int      ComputeRandomInteger(int maxInt = RAND_MAX);
 
-private:
-    int m_Seed;
+    static bool     ShuffleRepresentation(std::vector<int>& elements, int times = 1);
+};
+//--------------------------------------------------------------------------------------------------
 };
 //--------------------------------------------------------------------------------------------------
 #endif // H_RANDOMGENERATOR
