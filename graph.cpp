@@ -40,19 +40,58 @@ std::string trim(std::string str, const std::string chars = "\t\n\v\f\r ")
 }
 
 
-float distance(pair<float,float> p1 , pair<float,float> p2,int distance_function)
+float distance(pair<float,float> p1 , pair<float,float> p2,int distance_function)////should return rounded integers
 {
-    float aux1=(p1.first-p2.first)*(p1.first-p2.first);
-    float aux2=(p1.second-p2.second)*(p1.second-p2.second);
-    float res=sqrt(aux1+aux2);
     if(distance_function==EUC_2D)
     {
-        return res;
+        float aux1=(p1.first-p2.first)*(p1.first-p2.first);
+        float aux2=(p1.second-p2.second)*(p1.second-p2.second);
+        float res=sqrt(aux1+aux2);
+
+        return round(res);
+    }
+    else if(distance_function==GEO)
+    {
+        float RRR = 6378.388;
+        float PI = 3.141592;
+
+        float deg1 = round( p1.first );
+        float min1 = p1.first - deg1;
+        float latitude1 = PI * (deg1 + 5.0 * min1 / 3.0 ) / 180.0;
+        deg1 = round( p1.second );
+        min1 = p1.second - deg1;
+        float longitude1 = PI * (deg1 + 5.0 * min1 / 3.0 ) / 180.0;
+
+        float deg2= round( p1.first );
+        float min2= p1.first - deg1;
+        float latitude2= PI * (deg2+ 5.0 * min2/ 3.0 ) / 180.0;
+        deg2= round( p1.second );
+        min2= p1.second - deg1;
+        float longitude2= PI * (deg2+ 5.0 * min2/ 3.0 ) / 180.0;
+
+        float q1 = cos( longitude1 - longitude2 );
+        float q2 = cos( latitude1 - latitude2 );
+        float q3 = cos( latitude1 + latitude2 );
+        float dij =( RRR * acos( 0.5*((1.0+q1)*q2 - (1.0-q1)*q3) ) + 1.0);
+
+        return round(dij);
+    }
+    else if (distance_function==MAN_2D)
+    {
+        return round(abs(p1.first-p2.first)+abs(p1.second-p2.second));
+    }
+    else if(distance_function==CEIL_2D)
+    {
+        float aux1=(p1.first-p2.first)*(p1.first-p2.first);
+        float aux2=(p1.second-p2.second)*(p1.second-p2.second);
+        float res=sqrt(aux1+aux2);
+
+        return ceil(res);
     }
     else
     {
         cout<<"NOT IMPLEMENTED DISTANCE";
-        return 0;
+        exit(1);
     }
     
 }
@@ -78,7 +117,7 @@ Graph::Graph(string path_to_input_file)
     while(1)///READ FLAGS
     {
         fin.getline(buffer,BUFSIZ);
-        if(string(buffer)=="NODE_COORD_SECTION" || string(buffer)=="EDGE_WEIGHT_SECTION")
+        if(trim(string(buffer))=="NODE_COORD_SECTION" || trim(string(buffer))=="EDGE_WEIGHT_SECTION")
         {
             break;
         }
@@ -145,7 +184,11 @@ Graph::Graph(string path_to_input_file)
             }
             else if(content=="LOWER_DIAG_ROW")
             {
-                representation= LOWER_DIAG_ROW;
+                representation= LOWER_DIAG_ROW;;
+            }
+            else if(content=="UPPER_ROW")
+            {
+                representation=UPPER_ROW;
             }
             else
             {
@@ -160,7 +203,7 @@ Graph::Graph(string path_to_input_file)
     for (int i=1;i<=number_of_vertexes_;i++)
     {
         vertexes_.push_back(i+1);
-        edges_.push_back(list<pair<int,double>>());
+        edges_.push_back(list<pair<int,float>>());
     }
 
     if(representation==-1)
@@ -171,38 +214,101 @@ Graph::Graph(string path_to_input_file)
     std::cout<<name<<"\n"<<representation<<"\n"<<comment<<"\n";
     while(1)///READ EDGES
     {
-        fin.getline(buffer,BUFSIZ);
-        ifstream line(trim(string(buffer)));
-        if(string(buffer)=="EOF")
-        {
-            break;
-        }
-        ///usleep(100000);
         if(distance_function_==EXPLICIT)
         {
+            fin.get();
             if(representation==FULL_MATRIX)
             {
-                std::cout<<"not implemented\n";
-                exit(0);
+                int aux;
+                auto it=edges_.begin();
+                for (int i=0;i<number_of_vertexes_;i++)
+                {
+                    for(int j=0;j<number_of_vertexes_;j++)
+                    {
+                        fin>>aux;
+                        it->push_back({j,aux});
+                    }
+                    it++;
+                }
             }
             else if(representation==UPPER_ROW)
             {
-                std::cout<<"not implemented\n";
-                exit(0);
+                int aux;
+                auto it_i=edges_.begin();
+                for (int i=0;i<number_of_vertexes_;i++)
+                {
+                    auto it_j=it_i;
+                    it_j++;
+                    it_i->push_back({i,0});
+                    for(int j=i+1;j<number_of_vertexes_;j++)
+                    {
+                        fin>>aux;
+                        it_i->push_back({j,aux});
+                        it_j->push_back({i,aux});
+                        it_j++;
+                    }
+                    it_i++;
+                }
             }
             else if(representation==UPPER_DIAG_ROW)
             {
-                std::cout<<"not implemented\n";
-                exit(0);
+                int aux;
+                auto it_i=edges_.begin();
+                for (int i=0;i<number_of_vertexes_;i++)
+                {
+                    auto it_j=it_i;
+                    for(int j=i;j<number_of_vertexes_;j++)
+                    {
+                        fin>>aux;
+
+                        it_i->push_back({j,aux});
+                        if(i!=j)
+                        {
+                            it_j->push_back({i,aux});
+                        }
+                        it_j++;
+                    }
+                    it_i++;
+                }
             }
             else if(representation==LOWER_DIAG_ROW)
             {
-                std::cout<<"not implemented\n";
-                exit(0);
+                int aux;
+                auto it_i=edges_.begin();
+                for (int i=0;i<number_of_vertexes_;i++)
+                {
+                    auto it_j=edges_.begin();
+                    for(int j=0;j<=i;j++)
+                    {
+
+                        fin>>aux;
+
+                        it_i->push_back({j,aux});
+                        if(i!=j)
+                        {
+                            it_j->push_back({i,aux});
+                        }
+                        it_j++;
+                    }
+                    it_i++;
+                }
             }
+            else
+            {
+                cout<<"NOT IMPLEMENTED\n";
+                exit(1);
+            }
+            break;
         }
         else
         {
+
+            fin.getline(buffer,BUFSIZ);
+            ifstream line(trim(string(buffer)));
+            if(string(buffer)=="EOF")
+            {
+                break;
+            }
             if(representation==NO_COORDS)
             {
                 int idx;
@@ -221,18 +327,14 @@ Graph::Graph(string path_to_input_file)
             }
         }
     }
-    if(distance_function_==EXPLICIT)
-    {
-        std::cout<<"NOT IMPLEMENTED YET\n";
-        exit(0);
-    }
-    else
+    if(distance_function_!=EXPLICIT)
     {
         auto i_iterator=points.begin();
         auto j_iterator=points.end();
 
         for(int i=0;i<number_of_vertexes_;i++)
         {
+            
             j_iterator=i_iterator;
             j_iterator++;
             for(int j=i+1;j<number_of_vertexes_;j++)
@@ -255,6 +357,10 @@ Graph::Graph(string path_to_input_file)
             i_iterator++;
         }
     }
+    for(list<pair<int,float>> &it:edges_)
+    {
+        it.sort([](pair<int,float> p1,pair<int,float> p2){return p1.first<p2.first;});
+    }
     cout<<"DONE\n";
 }
 
@@ -269,14 +375,16 @@ void Graph::printGraph()
     cout<<"N of vertexes "<<this->number_of_vertexes_<<"\n";
     cout<<"EDGES";
     int idx=0;
+    cout<<"\n\n";
     for(auto idx_adj:edges_)
     {
         cout<<idx<<":\n";
         for (auto el:idx_adj)
         {
-            cout<<"node: "<<el.first<<" distance: "<<el.second<<"\n";
+        cout<<"node: "<<el.first<<" distance: "<<el.second<<"\n";
         }
         idx++;
     }
-    
+    cout<<"\n\n";
+
 }

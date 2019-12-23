@@ -35,7 +35,7 @@ class Graph
     int distance_function_;
 
     list<int>        vertexes_;
-    list<list<pair<int,double>>>  edges_;///pair left  - index of neighbour
+    list<list<pair<int,float>>>  edges_;///pair left  - index of neighbour
                                          ////pair right - cost of edge
     void printGraph();
     Graph(string path_to_input_file);
