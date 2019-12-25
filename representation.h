@@ -2,6 +2,7 @@
 #define H_REPRESENTATION
 //--------------------------------------------------------------------------------------------------
 #include <vector>
+#include <list>
 #include "shared.h"
 //--------------------------------------------------------------------------------------------------
 class CRepresentation
@@ -15,17 +16,16 @@ public:
     int  GetCount() const;
 
     bool Set(const int idx, const int value);
-    bool Swap(const int idx1, const int idx2);
     bool IsEqual(const CRepresentation &rep) const;
 
 public:
     static bool CrossOver(CRepresentation &rep1,
                           CRepresentation &rep2);
 
-    static std::vector<int> Convert(const CRepresentation &rep);
+    static std::list<int> Decode(const CRepresentation &rep);
 
 private:
-    bool    IsIndexValid(const int idx) const;
+    bool IsIndexValid(const int idx) const;
 
 private:
     static void UpdateAib(int pos, int N, std::vector<int>& aib);

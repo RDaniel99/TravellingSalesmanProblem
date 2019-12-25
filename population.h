@@ -9,7 +9,9 @@
 class CPopulation
 {
 public:
-    CPopulation(const int total, const int totalPerRep, const bool generateRandom = true, const float mutationRate=1,const float crossoverRate=1);
+    CPopulation(const int total, const int totalPerRep, const bool generateRandom = true, 
+                const double mutationRate = DEFAULT_MUTATION_RATIO, 
+                const double crossoverRate = DEFAULT_CROSS_RATIO);
     ~CPopulation();
 
     CRepresentation*    Get(const int idx) const;
@@ -18,6 +20,8 @@ public:
     bool                AddRep(CRepresentation* rep);
     bool                RemoveByRep(const CRepresentation* rep);
     bool                RemoveByIdx(const int idx);
+    
+public:
     void                Evolve();
     void                Mutate();
     void                Crossover();
@@ -27,10 +31,10 @@ private:
     bool IsIndexValid(const int idx) const;
 
 private:
-    int                             generation;
+    int                             m_GenerationIdx;
     int                             m_Count;
-    float                           mutation_Rate;
-    float                           crossover_Rate;
+    double                          m_MutationRate;
+    double                          m_CrossRate;
     std::vector<CRepresentation*>   m_Elements;
     
 };

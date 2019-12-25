@@ -1,20 +1,24 @@
 #include "graphEvaluator.h"
 
-int64_t GraphEvaluator::getFitness(Graph &graph, CRepresentation &representation)
+int64_t GraphEvaluator::ComputeFitness(Graph &graph, CRepresentation &representation)
 {
-    int64_t sum=0;
-    list<int> path=getDecodedRepresentation(representation);
-    auto iter=path.begin();
+    int64_t sum = 0;
+    list<int> path = CRepresentation::Decode(representation);
+    auto iter = path.begin();
 
-    for (int idx=0;idx<graph.number_of_vertexes_-1;idx++)
+    for (int idx = 0;idx < graph.number_of_vertexes_-1;idx++)
     {
-        auto iter2=iter;
+        auto iter2 = iter;
         iter2++;
-        sum+=graph.GetCost(*iter,*iter2);
+        sum += graph.GetCost(*iter,*iter2);
         iter++;
     }
+
     return sum;
 }
+
+/*
+----DEPRECATED----
 
 list<int> GraphEvaluator::getDecodedRepresentation(CRepresentation &representation)
 {
@@ -37,3 +41,4 @@ list<int> GraphEvaluator::getDecodedRepresentation(CRepresentation &representati
     }
     return result;
 }
+*/
