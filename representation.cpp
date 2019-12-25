@@ -30,7 +30,9 @@ CRepresentation::CRepresentation(const CRepresentation &rep)
     m_Elements.clear();
 
     for(int i = 0; i < m_Count; i++)
-        m_Elements[i] = rep.Get(i);
+    { 
+        m_Elements.push_back(rep.Get(i));
+    }
 }
 //--------------------------------------------------------------------------------------------------
 CRepresentation::~CRepresentation()

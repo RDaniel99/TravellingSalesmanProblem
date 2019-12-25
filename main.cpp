@@ -63,7 +63,7 @@ int main(int argc,char* argv[])
         CPopulation pop(popSize,graph.number_of_vertexes_,true,m_rate,c_rate);
         for(int i=0;i<=MaxGenerations;i++)
         {
-            std::cout << run << ": " << i << '\n';
+            ///std::cout << run << ": " << i << '\n';
             pop.Evolve();
             if(i%100==0)
             {
