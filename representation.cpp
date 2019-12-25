@@ -14,7 +14,7 @@ CRepresentation::CRepresentation(const bool generateRandom, const int totalEleme
     {
         int N = totalElements;
         while(N--)
-            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N+1));
+            m_Elements.push_back(CRandomGenerator::ComputeRandomInteger(N + 1));
     }
     else
     {
@@ -41,7 +41,10 @@ CRepresentation::~CRepresentation()
 bool CRepresentation::Set(const int idx, const int value)
 {
     if(!IsIndexValid(idx))
-        return 0;
+        return false;
+
+    if(value < 0 || value >= m_Count - idx)
+        return false;
 
     m_Elements[idx] = value;
 
@@ -59,16 +62,6 @@ int CRepresentation::Get(const int idx) const
 int CRepresentation::GetCount() const
 {
     return m_Count;
-}
-//--------------------------------------------------------------------------------------------------
-bool CRepresentation::Swap(const int idx1, const int idx2)
-{
-    if(!IsIndexValid(idx1) || !IsIndexValid(idx2))
-        return false;
-
-    swap(m_Elements[idx1], m_Elements[idx2]);
-
-    return true;
 }
 //--------------------------------------------------------------------------------------------------
 bool CRepresentation::IsEqual(const CRepresentation &rep) const
@@ -125,9 +118,9 @@ bool CRepresentation::CrossOver(CRepresentation &rep1, CRepresentation &rep2)
     return false;
 }
 //--------------------------------------------------------------------------------------------------
-vector<int> CRepresentation::Convert(const CRepresentation &rep)
+list<int> CRepresentation::Decode(const CRepresentation &rep)
 {
-    vector<int> path;
+    list<int> path;
     vector<int> aib;
 
     int N = rep.GetCount();
@@ -145,7 +138,7 @@ vector<int> CRepresentation::Convert(const CRepresentation &rep)
 
     for(int i = 0; i < N; i++)
     {
-        int need = rep.Get(i);
+        int need = rep.Get(i) + 1;
         int pw = pwAux;
         int pos = 0;
 
@@ -158,7 +151,7 @@ vector<int> CRepresentation::Convert(const CRepresentation &rep)
             pw >>= 1;
         }
 
-        path.push_back(pos + 1);
+        path.push_back(pos);
         CRepresentation::UpdateAib(pos + 1, N, aib);
     }
 

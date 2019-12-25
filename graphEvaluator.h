@@ -5,7 +5,6 @@
 
 class GraphEvaluator
 {
-    public:
-    int64_t getFitness(Graph &graph, CRepresentation &representation);     
-    list<int> getDecodedRepresentation(CRepresentation &representation);
+public:
+    int64_t ComputeFitness(Graph &graph, CRepresentation &representation);     
 };

@@ -9,14 +9,14 @@ using namespace randgen;
 CPopulation::CPopulation(const int total, 
              const int totalPerRep,
              const bool generateRandom, 
-             const float mutationRate,
-             const float crossoverRate)
+             const double mutationRate,
+             const double crossoverRate)
 {
-    generation=0;
+    m_GenerationIdx = 0;
     m_Count = total;
     m_Elements.clear();
-    crossover_Rate=crossoverRate;
-    mutation_Rate=mutationRate;
+    m_CrossRate = crossoverRate;
+    m_MutationRate = mutationRate;
 
     for(int i = 0; i < total; i++)
         m_Elements.push_back(new CRepresentation(generateRandom, totalPerRep));
@@ -42,7 +42,7 @@ int CPopulation::GetCount() const
 //--------------------------------------------------------------------------------------------------
 int CPopulation::GetGeneration() const
 {
-    return generation;
+    return m_GenerationIdx;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -89,29 +89,28 @@ void  CPopulation::Evolve()
     Mutate();
     Crossover();
     Select();
-    generation++;
-    
+    m_GenerationIdx++;
 }
 
 //--------------------------------------------------------------------------------------------------
 void  CPopulation::Mutate()
 {
     for(auto cromosome:m_Elements)
-    {
-        for(int i=0;i<cromosome->GetCount();i++)
-        {
-            if(CRandomGenerator::ComputeRandomInInterval(0,1)<=mutation_Rate)
+        for(int i = 0;i < cromosome->GetCount(); i++)
+            if(CRandomGenerator::ComputeRandomInInterval(0, 1) <= m_MutationRate)
             {
-                cromosome->Set(i,(cromosome->Get(i)+1)%2);
+                int newValue = CRandomGenerator::ComputeRandomInteger(cromosome->GetCount() - i);
+                cromosome->Set(i, newValue);
             }
-        }
-    }
 }
 
 //--------------------------------------------------------------------------------------------------
 void  CPopulation::Crossover()
 {
-
+    for(unsigned int i = 0; i < m_Elements.size(); i++)
+        for(unsigned int j = i + 1; j < m_Elements.size(); j++)
+            if(CRandomGenerator::ComputeRandomInInterval(0, 1) <= m_CrossRate)
+                CRepresentation::CrossOver(*m_Elements[i], *m_Elements[j]);
 }
 
 //--------------------------------------------------------------------------------------------------

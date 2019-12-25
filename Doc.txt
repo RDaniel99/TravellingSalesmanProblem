@@ -1,0 +1,17 @@
+CRepresentation ---> Clasa ce va retine (encoded) reprezentarea unui traseu astfel:
+2 0 0 va reprezenta 3 1 2
+
+Get(idx) --> Ia valoarea de la pozitia idx (ex: Get(0) = 2)
+GetCount() --> Va returna numarul de noduri din traseu (ex: GetCount() = 3)
+Set(idx, value) --> Va seta valoarea de pe pozitia idx cu value (ex: Set(1, 1) --> 2 1 0, in timp ce Set(1, 2) nu va merge, nu se poate pune 2 pe poz 1)
+IsEqual(rep) --> verifica daca reprezentarea mea e egala cu rep (ex: IsEqual({1, 0, 0} --> false))
+CrossOver(rep1, rep2) --> face cross intre rep1 si rep2, modificand parametrii. returneaza true daca a reusit, false daca nu
+Decode(rep) --> decodeza, mai exact se returneaza un list<int> cu ce reprezinta encodarea
+IsIndexValid(idx) --> Verifica daca idx nu e in afara vectorului
+UpdateAib/QueryAib() --> pt Decode(), ca sa faca totul in NlogN, nu N^2
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+Fisierul shared l-am facut ca sa putem pune defaulturile la ratio etc, ca sa le modificam dintr-un singur loc pe toate
+Mai pune acolo ce constante va fi nevoie

@@ -11,15 +11,15 @@ using namespace std;
 void logPopulation(ofstream &fout,string instanceName,CPopulation &pop,Graph &graph,time_t start,int run)
 {
     GraphEvaluator evaluator;
-    float bestFit=evaluator.getFitness(graph,*pop.Get(0));
-    float meanFit=evaluator.getFitness(graph,*pop.Get(0));
-    float worstFit=evaluator.getFitness(graph,*pop.Get(0));
+    float bestFit=evaluator.ComputeFitness(graph,*pop.Get(0));
+    float meanFit=evaluator.ComputeFitness(graph,*pop.Get(0));
+    float worstFit=evaluator.ComputeFitness(graph,*pop.Get(0));
 
     float sum=0;
     for(int i=0;i<pop.GetCount();i++)
     {
         auto el=pop.Get(i);
-        auto fit=evaluator.getFitness(graph,*el);
+        auto fit=evaluator.ComputeFitness(graph,*el);
         sum+=fit;
         if(bestFit>fit)
         {
@@ -43,7 +43,6 @@ int main(int argc,char* argv[])
     float c_rate=0.2;
     time_t start=time(NULL);
 
-
     Graph graph(path);
     GraphEvaluator evaluator;
     string name=string(argv[1]);
@@ -60,9 +59,11 @@ int main(int argc,char* argv[])
 
     for(int run=1;run<=30;run++)
     {
+        std::cout << run << '\n';
         CPopulation pop(popSize,graph.number_of_vertexes_,true,m_rate,c_rate);
         for(int i=0;i<=MaxGenerations;i++)
         {
+            std::cout << run << ": " << i << '\n';
             pop.Evolve();
             if(i%100==0)
             {
