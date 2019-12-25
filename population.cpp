@@ -1,18 +1,18 @@
 #include "population.h"
 #include "randomgenerator.h"
 
-#include <iostream>
-
 //--------------------------------------------------------------------------------------------------
 using namespace std;
 using namespace randgen;
 
 //--------------------------------------------------------------------------------------------------
-CPopulation::CPopulation(const int total, 
+CPopulation::CPopulation(const int total,
              const int totalPerRep,
+             Graph graph,
+             GraphEvaluator evaluator,
              const bool generateRandom, 
              const double mutationRate,
-             const double crossoverRate)
+             const double crossoverRate):m_graph(graph),m_evaluator(evaluator)
 {
     m_GenerationIdx = 0;
     m_Count = total;
@@ -48,6 +48,12 @@ int CPopulation::GetGeneration() const
 }
 
 //--------------------------------------------------------------------------------------------------
+int CPopulation::GetPopSize() const
+{
+    return m_Elements.size();
+}
+
+//--------------------------------------------------------------------------------------------------
 bool CPopulation::AddRep(CRepresentation* rep)
 {
     if(!rep)
@@ -80,50 +86,55 @@ bool CPopulation::RemoveByIdx(const int idx)
 //--------------------------------------------------------------------------------------------------
 bool CPopulation::IsIndexValid(const int idx) const
 {
-    if(idx < 0 || idx >= m_Count)
+    if(idx < 0 || idx >= GetPopSize())
         return false;
 
     return true;
 }
 //--------------------------------------------------------------------------------------------------
-void  CPopulation::Evolve()
+void  CPopulation::Evolve(bool isDestructive)
 {
-    Mutate();
-    Crossover();
+    Mutate(isDestructive);
+    Crossover(isDestructive);
     Select();
+
     m_GenerationIdx++;
 }
 
 //--------------------------------------------------------------------------------------------------
-void  CPopulation::Mutate()
+void  CPopulation::Mutate(bool isDestructive)
 {
     list<CRepresentation> toAdd;
+    int idx=0;
     for(auto cromosome:m_Elements)
     {
         int ok=0;
-
         CRepresentation cpy(*cromosome);
-        
         for(int i = 0;i < cromosome->GetCount(); i++)
+        {
             if(CRandomGenerator::ComputeRandomInInterval(0, 1) <= m_MutationRate)
             {
                 ok=1;
                 int newValue = CRandomGenerator::ComputeRandomInteger(cromosome->GetCount() - i);
                 cromosome->Set(i, newValue);
             }
+        }
         if(ok==1)
         {
             toAdd.push_back(cpy);
         }
     }
-    for(auto cromosome:toAdd)
+    if(isDestructive==false)
     {
-        m_Elements.push_back(new CRepresentation(cromosome));
+        for(auto cromosome:toAdd)
+        {
+            m_Elements.push_back(new CRepresentation(cromosome));
+        }
     }
 }
 
 //--------------------------------------------------------------------------------------------------
-void  CPopulation::Crossover()
+void  CPopulation::Crossover(bool isDestructive)
 {
     list<CRepresentation> toAdd;
     vector<int> inserted(m_Elements.size());
@@ -147,20 +158,71 @@ void  CPopulation::Crossover()
                 }
                 CRepresentation::CrossOver(*m_Elements[i], *m_Elements[j]);
             }
-    for(auto cromosome:toAdd)
-    {
-        m_Elements.push_back(new CRepresentation(cromosome));
+    if(isDestructive==false)
+    {   
+        for(auto cromosome:toAdd)
+        {
+            m_Elements.push_back(new CRepresentation(cromosome));
+        }
     }
 }
 
 //--------------------------------------------------------------------------------------------------
-void  CPopulation::Select()
+void  CPopulation::Select() 
 {
-    int size=m_Elements.size();
-    for(int i=0;i<size-m_Count;i++)
-    {
-        m_Elements.erase(m_Elements.begin()+(rand()%(size-i)));
-    }
-}
+    int size=GetPopSize();
+    vector<float> fitness(m_Elements.size());
+    vector<float> eval(m_Elements.size());
 
+    int64_t sum=0;
+
+    for(int i=0;i<size;i++)
+    {   
+        fitness[i]=m_evaluator.ComputeFitness(m_graph,*Get(i));
+        sum+=fitness[i];
+    }    
+    for(int i=0;i<size;i++)
+    {
+        for (int j=i+1;j<size;j++)
+        {
+            if(fitness[i]>fitness[j])
+            {
+                swap(fitness[i],fitness[j]);
+                swap(m_Elements[i],m_Elements[j]);
+            }
+        }
+    }
+
+    for(int i=0;i<size;i++)
+    {   
+        fitness[i]/=sum;
+        eval[i]=fitness[i];
+        if(i!=0)
+        {
+            eval[i]+=+eval[i-1];
+        }
+    }
+    vector<CRepresentation*> newPop;
+    for(int i=0;i<GetCount()/ELITISM_PERCENTAGE;i++)
+    {
+        newPop.push_back(new CRepresentation(*m_Elements[i]));
+    }
+
+    for(int i=newPop.size();i<GetCount();i++)
+    {
+        double aux=CRandomGenerator::ComputeRandomInInterval(0,1);
+        int j=0;
+        while(aux>eval[j] && j<eval.size())
+        {
+            j++;
+        }
+        newPop.push_back(new CRepresentation(*m_Elements[j]));
+    }
+    
+    for (int i=0;i<m_Elements.size();i++)
+    {
+        delete m_Elements[i];
+    }
+    m_Elements=newPop;
+}
 //--------------------------------------------------------------------------------------------------

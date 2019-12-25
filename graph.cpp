@@ -96,7 +96,14 @@ float distance(pair<float,float> p1 , pair<float,float> p2,int distance_function
     
 }
 
-
+Graph::Graph(Graph &graph)
+{
+    this->distance_function_=graph.distance_function_;
+    this->edges_=graph.edges_;
+    this->number_of_edges_=graph.number_of_edges_;
+    this->number_of_vertexes_=graph.number_of_vertexes_;
+    this->vertexes_=graph.vertexes_;
+}
 Graph::Graph(string path_to_input_file)
 {
     

@@ -36,11 +36,13 @@ void logPopulation(ofstream &fout,string instanceName,CPopulation &pop,Graph &gr
 
 int main(int argc,char* argv[])
 {
+    srand(0);
+
     string path = "./ALL_tsp/"+string(argv[1]);
     int popSize=50;
     int MaxGenerations=10000;
-    float m_rate=0.2;
-    float c_rate=0.2;
+    float m_rate=1;
+    float c_rate=1;
     time_t start=time(NULL);
 
     Graph graph(path);
@@ -54,21 +56,22 @@ int main(int argc,char* argv[])
     ofstream fout(name+".csv");
 
 
-    CPopulation pop(popSize,graph.number_of_vertexes_,true,0.2,0.2);
     fout<<"run,name, generation, min, mean, max, time ,\n";
 
     for(int run=1;run<=30;run++)
     {
-        std::cout << run << '\n';
-        CPopulation pop(popSize,graph.number_of_vertexes_,true,m_rate,c_rate);
+        std::cout <<"run: "<< run << '\n';
+        CPopulation pop(popSize,graph.number_of_vertexes_,graph,evaluator,true,0.2,0.2);
         for(int i=0;i<=MaxGenerations;i++)
         {
-            ///std::cout << run << ": " << i << '\n';
-            pop.Evolve();
-            if(i%100==0)
+            std::cout << run << ": " << i << '\n';
+            /*if(i%100==0)
             {
+                std::cout<<"    Generation: "<<pop.GetGeneration()<<"\n";
                 logPopulation(fout, name, pop,graph,start,run);
             }
+            */
+            pop.Evolve(true);
         }
     }
     return 0;
