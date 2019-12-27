@@ -1,0 +1,102 @@
+from Evaluator import *
+from Representation import *
+import numpy as np
+from copy import deepcopy
+import random
+import matplotlib.pyplot as plt
+import pandas as pd
+
+from multiprocessing import Pool
+from Population import *
+from string import *
+from scipy.spatial import distance
+
+def evolve(pop,maxGen):
+    
+    meanResults=[]
+    bestResults=[]
+
+    nGenerations=maxGen+1
+    start=time.time()
+    for generation in range(nGenerations):
+        pop.select()
+        pop.mutate()
+        if(random.uniform(0,1)<pop.cRate):
+            pop.crossover()
+        if(generation%1==0):
+            #print(str(generation)+' '+str(pop.meanFit())+' '+str(pop.bestFit()))
+            meanResults=meanResults+[pop.meanFit()]
+            bestResults=bestResults+[pop.bestFit()]
+    stop=time.time()
+    return[meanResults,bestResults,stop-start]
+
+def getData(pop,maxGen):
+    res=[]
+    with Pool(15) as p:
+        res=p.starmap(evolve,[[deepcopy(pop),maxGen] for _ in range(15)])
+    return(res)     
+    
+def toCsv(pop,iName,maxGen):
+    data=getData(pop,maxGen)
+    print("Got Data")
+    mean=[aux[0] for aux in data]
+    best=[aux[1] for aux in data]
+    time=[aux[2] for aux in data]
+
+    df=pd.DataFrame({'Generations':[i for i in range(len(mean[0]))], 'mean result': np.mean(mean,axis=0),'best result':np.mean(best,axis=0)})
+    pd.DataFrame({'Instance':iName, 'Mean': np.mean(best,axis=0)[-1],'Min':np.min(best,axis=0)[-1],'Max':np.max(best,axis=0)[-1],'Std':np.std(best,axis=0)[-1],'Time': np.mean(time)},index=[0],columns=['Instance','Mean','Min','Max','Std','Time']).to_csv(iName+'.csv')
+
+    print("test0")
+    print(df['Generations'])
+    print(df['mean result'])
+    plt.plot( 'Generations', 'mean result', data=df,  color='blue', linewidth=2)
+    print('test1')
+    plt.plot( 'Generations', 'best result', data=df,  color='red', linewidth=2)
+    print('test1')
+
+    plt.xlabel('Generation')
+    print('test1')
+    
+    plt.ylabel("Evaluation")
+    print('test1')
+
+    plt.title(iName)
+
+    print('test1')
+    plt.legend()
+    
+    print('test1')
+
+    nDim=len(pop.constraits)
+    plt.savefig(iName+'.png')
+    plt.clf()
+    
+
+def EucDistance(x,y):
+    return distance.euclidean(x,y)
+
+def ReadGraph(path):
+    graph=[]
+    points=[]
+    with open(path,"r") as f:
+        for line in f.readlines():
+            x,y=line.strip().split()
+            x=float(x)
+            y=float(y)
+            points=points+[[x,y]]
+
+    for i in range(len(points)):
+        distances=[]
+        for j in range(len(points)):
+            distances=distances+[EucDistance(points[i],points[j])]
+        graph=graph+[distances]
+    return graph
+
+path="input.txt"
+graph=ReadGraph(path)
+
+evaluator=Evaluator(graph)
+
+pop=Population(evaluator,pMax=20,mRate=0.05 ,cRate=0.01,ePercent=0.1)
+
+toCsv(pop,"NUME INSTANTA",maxGen=10)
