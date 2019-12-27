@@ -6,5 +6,5 @@
 class GraphEvaluator
 {
 public:
-    int64_t ComputeFitness(Graph &graph, CRepresentation &representation);     
+    float ComputeFitness(Graph &graph, CRepresentation &representation);     
 };

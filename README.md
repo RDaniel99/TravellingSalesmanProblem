@@ -1,7 +1,8 @@
 # TravellingSalesmanProblem
 
-## Cyclic Crossover
+## Related papers
 #### https://www.hindawi.com/journals/cin/2017/7430125/
+#### https://arxiv.org/pdf/1801.07233.pdf
 
 ## TSPLIB Documentation:
 http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp95.pdf

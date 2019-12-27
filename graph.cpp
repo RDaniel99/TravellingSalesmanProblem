@@ -48,7 +48,7 @@ float distance(pair<float,float> p1 , pair<float,float> p2,int distance_function
         float aux2=(p1.second-p2.second)*(p1.second-p2.second);
         float res=sqrt(aux1+aux2);
 
-        return round(res);
+        return (res);
     }
     else if(distance_function==GEO)
     {
@@ -74,11 +74,11 @@ float distance(pair<float,float> p1 , pair<float,float> p2,int distance_function
         float q3 = cos( latitude1 + latitude2 );
         float dij =( RRR * acos( 0.5*((1.0+q1)*q2 - (1.0-q1)*q3) ) + 1.0);
 
-        return round(dij);
+        return (dij);
     }
     else if (distance_function==MAN_2D)
     {
-        return round(abs(p1.first-p2.first)+abs(p1.second-p2.second));
+        return (abs(p1.first-p2.first)+abs(p1.second-p2.second));
     }
     else if(distance_function==CEIL_2D)
     {

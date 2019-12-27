@@ -22,7 +22,7 @@ def evolve(pop,maxGen):
         pop.mutate()
         if(random.uniform(0,1)<pop.cRate):
             pop.crossover()
-        if(generation%50==0):
+        if(generation%200==0):
             #print(str(generation)+' '+str(pop.meanFit())+' '+str(pop.bestFit()))
             meanResults=meanResults+[pop.meanFit()]
             bestResults=bestResults+[pop.bestFit()]
@@ -75,7 +75,6 @@ def EucDistance(x,y):
     return distance.euclidean(x,y)
 
 def ReadGraph(path):
-    graph=[]
     points=[]
     with open(path,"r") as f:
         for line in f.readlines():
@@ -84,18 +83,14 @@ def ReadGraph(path):
             y=float(y)
             points=points+[[x,y]]
 
-    for i in range(len(points)):
-        distances=[]
-        for j in range(len(points)):
-            distances=distances+[EucDistance(points[i],points[j])]
-        graph=graph+[distances]
-    return graph
+    return points
 
 path="input.txt"
 graph=ReadGraph(path)
 
-evaluator=Evaluator(graph)
+print("Graf read")
+evaluator=Evaluator(graph,EucDistance)
 
 pop=Population(evaluator,pMax=20,mRate=0.05 ,cRate=0.01,ePercent=0.1)
 
-toCsv(pop,"NUME INSTANTA",maxGen=100)
+toCsv(pop,"a4",maxGen=10000)

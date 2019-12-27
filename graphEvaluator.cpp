@@ -1,8 +1,8 @@
 #include "graphEvaluator.h"
 
-int64_t GraphEvaluator::ComputeFitness(Graph &graph, CRepresentation &representation)
+float GraphEvaluator::ComputeFitness(Graph &graph, CRepresentation &representation)
 {
-    int64_t sum = 0;
+    float sum = 0;
     list<int> path = CRepresentation::Decode(representation);
     auto iter = path.begin();
 
@@ -10,6 +10,7 @@ int64_t GraphEvaluator::ComputeFitness(Graph &graph, CRepresentation &representa
     {
         auto iter2 = iter;
         iter2++;
+        ///cout<<*iter<<" "<<*iter2<<" "<<graph.GetCost(*iter,*iter2)<<"\n";
         sum += graph.GetCost(*iter,*iter2);
         iter++;
     }
