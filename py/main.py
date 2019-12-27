@@ -3,7 +3,6 @@ from Representation import *
 import numpy as np
 from copy import deepcopy
 import random
-import matplotlib.pyplot as plt
 import pandas as pd
 
 from multiprocessing import Pool
@@ -23,7 +22,7 @@ def evolve(pop,maxGen):
         pop.mutate()
         if(random.uniform(0,1)<pop.cRate):
             pop.crossover()
-        if(generation%1==0):
+        if(generation%50==0):
             #print(str(generation)+' '+str(pop.meanFit())+' '+str(pop.bestFit()))
             meanResults=meanResults+[pop.meanFit()]
             bestResults=bestResults+[pop.bestFit()]
@@ -42,27 +41,27 @@ def toCsv(pop,iName,maxGen):
     mean=[aux[0] for aux in data]
     best=[aux[1] for aux in data]
     time=[aux[2] for aux in data]
-
+    with open(iName+"mean","w") as f:
+        f.write(str(mean))
+    with open(iName+"best","w") as f:
+        f.write(str(best))
+        
     df=pd.DataFrame({'Generations':[i for i in range(len(mean[0]))], 'mean result': np.mean(mean,axis=0),'best result':np.mean(best,axis=0)})
     pd.DataFrame({'Instance':iName, 'Mean': np.mean(best,axis=0)[-1],'Min':np.min(best,axis=0)[-1],'Max':np.max(best,axis=0)[-1],'Std':np.std(best,axis=0)[-1],'Time': np.mean(time)},index=[0],columns=['Instance','Mean','Min','Max','Std','Time']).to_csv(iName+'.csv')
 
-    print("test0")
+    """
     print(df['Generations'])
     print(df['mean result'])
     plt.plot( 'Generations', 'mean result', data=df,  color='blue', linewidth=2)
-    print('test1')
     plt.plot( 'Generations', 'best result', data=df,  color='red', linewidth=2)
-    print('test1')
 
     plt.xlabel('Generation')
-    print('test1')
     
     plt.ylabel("Evaluation")
     print('test1')
 
     plt.title(iName)
 
-    print('test1')
     plt.legend()
     
     print('test1')
@@ -70,7 +69,7 @@ def toCsv(pop,iName,maxGen):
     nDim=len(pop.constraits)
     plt.savefig(iName+'.png')
     plt.clf()
-    
+    """    
 
 def EucDistance(x,y):
     return distance.euclidean(x,y)
@@ -99,4 +98,4 @@ evaluator=Evaluator(graph)
 
 pop=Population(evaluator,pMax=20,mRate=0.05 ,cRate=0.01,ePercent=0.1)
 
-toCsv(pop,"NUME INSTANTA",maxGen=10)
+toCsv(pop,"NUME INSTANTA",maxGen=100)
