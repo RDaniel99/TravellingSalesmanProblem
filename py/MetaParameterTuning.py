@@ -283,77 +283,105 @@ def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations):
 
 def geneticAlgorithmPlot(population, popSize, eliteSize, mutationRate, generations):
     pop = initialPopulation(popSize, population)
-
-    bestResults=[]
-    meanResults=[]
-
+    progress = []
+    progress.append(1 / rankRoutes(pop)[0][1])
+    
+    best=(1/rankRoutes(pop)[0][1])
     for i in range(0, generations):
         if(i%10==0):
-            print("GENERATION "+str(i)+" curr distance: " + str(1 / rankRoutes(pop)[0][1]))
-            bestResults=bestResults+[1 / rankRoutes(pop)[0][1]]
-            
-            allResults=[]
-            for res in rankRoutes(pop):
-                allResults=allResults+[1/res[1]]
-
-            meanResult=np.mean(allResults)
-            meanResults=meanResults+[meanResult]
+            print("curr distance: " + str(1 / rankRoutes(pop)[0][1]))
         pop = nextGeneration(pop, eliteSize, mutationRate)
+        progress.append(1 / rankRoutes(pop)[0][1])
         
-    return bestResults,meanResults
+        if best>(1/ rankRoutes(pop)[0][1]):
+            best=(1/ rankRoutes(pop)[0][1])
+    #plt.plot(progress) 
+    #plt.ylabel('Distance')
+    #plt.xlabel('Generation')
+    #plt.show()
+    return best
 
 
 # ## Reading input
 
 # In[12]:
 
-inputs=[]
-input_path="./py/inputs"
-import os
 
-for filename in os.listdir(input_path):
-    cityList=[]
-    with open(input_path+"/"+filename,"r") as f:
-        lines=f.readlines()
-        for line in lines:
-            line=line[:-1]
-            split=line.split(" ")
-            while("" in split) : 
-                split.remove("") 
-            x,y=split
-            cityList.append(City(x=float(x),y=float(y)))
+cityList=[]
+input_path="./input.txt"
+with open(input_path,"r") as f:
+    lines=f.readlines()
+    for line in lines:
+        line=line[:-1]
+        split=line.split(" ")
+        while("" in split) : 
+            split.remove("") 
+        x,y=split
+        cityList.append(City(x=float(x),y=float(y)))
 
-    inputs=inputs+[[input_path+"/"+filename,cityList]]
 
-print(inputs)
+# # Running script
+
+# In[13]:
+
+
+results=[]
+
 
 # In[14]:
 
 
-params={'popSize': 90, 'eliteSize': 12, 'mutationRate': 0.004107141255506286, 'generations': 2000}
+params={'popSize':100,'eliteSize':10,'mutationRate':0.005,'generations':500}
 
-for test_name,cityList in inputs:
+for idx in range(500):
+    print("GENERATION: "+str(idx))
+    params['popSize']=random.choice([_ for _ in range(15,100)])
+    params['eliteSize']=int(random.uniform(0,0.2)*params['popSize'])
+    params['mutationRate']=random.uniform(0,0.1)
+    
+    best=geneticAlgorithmPlot(population=cityList, popSize=params['popSize'], eliteSize=params['eliteSize'], mutationRate=params['mutationRate'], generations=params['generations'])
 
-    print("TEST : "+str(test_name)+"STARTED")
+    print(params)
+    print(best)
+    results=results+[[copy.deepcopy(params),best]]
 
-    with open("./py/results"+test_name.split('/')[-1]+"Best"+".txt","w+") as f:
-        f.writelines(str(params))
-        f.close()
 
-    with open("./py/results"+test_name.split('/')[-1]+"Mean"+".txt","w+") as f:
-        f.writelines(str(params))    
-        f.close()
+# In[ ]:
 
-    for _ in range(15):
-        print("RUN : "+str(_))
-        best,mean=geneticAlgorithmPlot(population=cityList, popSize=params['popSize'], eliteSize=params['eliteSize'], mutationRate=params['mutationRate'], generations=params['generations'])
-        
 
-        with open("./py/results"+test_name.split('/')[-1]+"Best"+".txt","a+") as f:
-            f.writelines(str(best))
-            f.close()
+print(results)
 
-        with open("./py/results"+test_name.split('/')[-1]+"Mean"+".txt","a+") as f:
-            f.writelines(str(mean))
-            f.close()
-# %%
+
+# # Observatii
+# 
+# Rezultatele devin brusc mai bune cand mutation rate-ul scade sub 0.1
+
+# In[ ]:
+
+
+resultsCpy=results
+
+
+# In[ ]:
+
+
+for idx1 in range(len(results)):
+    for idx2 in range(idx1,len(results)):
+        if(results[idx1][1]>results[idx2][1]):
+            aux=results[idx1]
+            results[idx1]=results[idx2]
+            results[idx2]=aux
+bestResults=results[:30]
+
+
+# In[ ]:
+
+
+for i in range(len(bestResults)):
+    print(bestResults[i][0])
+    print(bestResults[i][1])
+    
+# In[]:
+
+with open("results.txt","w") as f:
+    f.writelines(str(bestResults))
