@@ -308,7 +308,7 @@ def geneticAlgorithmPlot(population, popSize, eliteSize, mutationRate, generatio
 # In[12]:
 
 inputs=[]
-input_path="./py/inputs"
+input_path="./inputs"
 import os
 
 for filename in os.listdir(input_path):
@@ -320,7 +320,7 @@ for filename in os.listdir(input_path):
             split=line.split(" ")
             while("" in split) : 
                 split.remove("") 
-            x,y=split
+            _,x,y=split
             cityList.append(City(x=float(x),y=float(y)))
 
     inputs=inputs+[[input_path+"/"+filename,cityList]]
@@ -335,12 +335,12 @@ params={'popSize': 90, 'eliteSize': 12, 'mutationRate': 0.004107141255506286, 'g
 for test_name,cityList in inputs:
 
     print("TEST : "+str(test_name)+"STARTED")
-
-    with open("./py/results"+test_name.split('/')[-1]+"Best"+".txt","w+") as f:
+    print(os.getcwd())
+    with open("./results"+test_name.split('/')[-1]+"Best"+".txt","w+") as f:
         f.writelines(str(params))
         f.close()
 
-    with open("./py/results"+test_name.split('/')[-1]+"Mean"+".txt","w+") as f:
+    with open("./results"+test_name.split('/')[-1]+"Mean"+".txt","w+") as f:
         f.writelines(str(params))    
         f.close()
 
@@ -349,11 +349,11 @@ for test_name,cityList in inputs:
         best,mean=geneticAlgorithmPlot(population=cityList, popSize=params['popSize'], eliteSize=params['eliteSize'], mutationRate=params['mutationRate'], generations=params['generations'])
         
 
-        with open("./py/results"+test_name.split('/')[-1]+"Best"+".txt","a+") as f:
+        with open("./results"+test_name.split('/')[-1]+"Best"+".txt","a+") as f:
             f.writelines(str(best))
             f.close()
 
-        with open("./py/results"+test_name.split('/')[-1]+"Mean"+".txt","a+") as f:
+        with open("./results"+test_name.split('/')[-1]+"Mean"+".txt","a+") as f:
             f.writelines(str(mean))
             f.close()
 # %%
