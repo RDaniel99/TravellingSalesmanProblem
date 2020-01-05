@@ -335,7 +335,7 @@ params={'popSize': 90, 'eliteSize': 12, 'mutationRate': 0.004107141255506286, 'g
 for test_name,cityList in inputs:
 
     print("TEST : "+str(test_name)+"STARTED")
-    print(os.getcwd())
+
     with open("./results"+test_name.split('/')[-1]+"Best"+".txt","w+") as f:
         f.writelines(str(params))
         f.close()
