@@ -1,0 +1,53 @@
+# depslib dependency file v1.0
+1578227589 source:d:\personal data\faculty documents\genetici\hmw3\main.cpp
+	<cstdio>
+	<random>
+	<cstdlib>
+	<algorithm>
+	<fstream>
+	<cmath>
+	<ctime>
+	<cstring>
+	<string>
+	<iostream>
+	<chrono>
+
+1576835488 d:\personal data\faculty documents\genetici\hmw3\representation.h
+	<vector>
+	"shared.h"
+
+1576824098 d:\personal data\faculty documents\genetici\hmw3\shared.h
+
+1576836347 source:d:\personal data\faculty documents\genetici\hmw3\representation.cpp
+	"representation.h"
+	"randomgenerator.h"
+
+1576823941 d:\personal data\faculty documents\genetici\hmw3\randomgenerator.h
+	<random>
+	<cstdlib>
+	<ctime>
+
+1576830458 source:d:\personal data\faculty documents\genetici\hmw3\randomgenerator.cpp
+	<random>
+	<ctime>
+	<algorithm>
+	"randomgenerator.h"
+
+1576832444 source:d:\personal data\faculty documents\genetici\hmw3\population.cpp
+	"population.h"
+
+1576832539 d:\personal data\faculty documents\genetici\hmw3\population.h
+	<vector>
+	"representation.h"
+	"shared.h"
+
+1577105380 d:\personal data\faculty documents\genetici\hmw3\csvbuilder.h
+	<string>
+	<fstream>
+
+1577105497 source:d:\personal data\faculty documents\genetici\hmw3\csvbuilder.cpp
+	"csvbuilder.h"
+	<string>
+	<fstream>
+	<iostream>
+
